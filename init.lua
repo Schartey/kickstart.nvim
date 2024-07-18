@@ -68,6 +68,7 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+vim.opt.conceallevel = 2
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -157,6 +158,56 @@ require('lazy').setup({
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      require('toggleterm').setup {
+        open_mapping = [[<c-t>]],
+        autochdir = true,
+      }
+
+      --local Terminal = require('toggleterm.terminal').Terminal
+      --local lazygit = Terminal:new { cmd = 'lazygit', hidden = true }
+      --
+      --function _lazygit_toggle()
+      --  lazygit:toggle()
+      --end
+
+      --vim.api.nvim_set_keymap('n', '<leader>g', '<cmd>lua_lazygit_toggle()<CR>', { noremap = true, silent = true })
+    end,
+  },
+  {
+    'epwalsh/obsidian.nvim',
+    version = '*',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+    opts = {
+      workspaces = {
+        {
+          name = 'general',
+          path = '~/obsidian/vaults/general',
+        },
+        {
+          name = 'private',
+          path = '~/obsidian/vaults/private',
+        },
+        {
+          name = 'work',
+          path = '~/obsidian/vaults/work',
+        },
+        {
+          name = 'knorr_bremse',
+          path = '~/obsidian/vaults/work/knorr_bremse',
+        },
+        {
+          name = 'ehealth',
+          path = '~/obsidian/vaults/work/ehealth',
+        },
+      },
+    },
+  },
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
   --    require('gitsigns').setup({ ... })
@@ -316,6 +367,11 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      local find_obsidian = require 'custom/plugins/find_obsidian'
+      vim.keymap.set('n', '<leader>so', function()
+        find_obsidian.find_obsidian {}
+      end, { desc = '[S]earch [O]bsidian tags' })
     end,
   },
 
@@ -455,6 +511,7 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        bashls = {},
         -- clangd = {},
         gopls = {},
         pyright = {},
