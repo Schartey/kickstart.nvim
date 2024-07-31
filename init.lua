@@ -181,35 +181,21 @@ require('lazy').setup({
     end,
   },
   {
-    'epwalsh/obsidian.nvim',
+    'rcarriga/nvim-notify',
     version = '*',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-    },
-    opts = {
-      workspaces = {
-        {
-          name = 'general',
-          path = '~/obsidian/vaults/general',
-        },
-        {
-          name = 'private',
-          path = '~/obsidian/vaults/private',
-        },
-        {
-          name = 'work',
-          path = '~/obsidian/vaults/work',
-        },
-        {
-          name = 'knorr_bremse',
-          path = '~/obsidian/vaults/work/knorr_bremse',
-        },
-        {
-          name = 'ehealth',
-          path = '~/obsidian/vaults/work/ehealth',
-        },
-      },
-    },
+    config = function()
+      vim.notify = require 'notify'
+    end,
+  },
+  {
+    'schartey/obsidian-nvim',
+    version = '*',
+    --dir = '~/dev/private/obsidian-nvim',
+    --name = 'obsidian_nvim',
+    config = function()
+      local obsidian = require 'obsidian_nvim'
+      obsidian.setup()
+    end,
   },
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -262,7 +248,6 @@ require('lazy').setup({
       }
     end,
   },
-
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
@@ -373,13 +358,38 @@ require('lazy').setup({
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
 
-      local find_obsidian = require 'custom/plugins/find_obsidian'
-      vim.keymap.set('n', '<leader>so', function()
-        find_obsidian.find_obsidian {}
-      end, { desc = '[S]earch [O]bsidian tags' })
+      --local find_obsidian = require 'custom/plugins/find_obsidian'
+      --vim.keymap.set('n', '<leader>soq', function()
+      --  find_obsidian.find_obsidian_quick {}
+      --end, { desc = '[S]earch [O]bsidian [Q]uick' })
+
+      --vim.keymap.set('n', '<leader>so', function()
+      --  find_obsidian.find_obsidian(vim.g.obsidian.active_workspace, vim.g.obsidian.workspaces)
+      --end, { desc = '[S]earch [O]bsidian' })
+
+      ---- Replace by autocommand that recognizes current directory and sets workspace appropiatly
+      --vim.api.nvim_create_user_command('Ow', function(opts)
+      --  local obsidian_settings = vim.g.obsidian
+      --  obsidian_settings.active_workspace = opts.fargs[1]
+      --  vim.g.obsidian = obsidian_settings
+      --  print('Obsidian Workspace: ' .. vim.g.obsidian.active_workspace)
+      --end, {
+      --  nargs = 1,
+      --  complete = function(ArgLead, CmdLine, CursorPos)
+      --    local workspaces = {}
+      --    for _, workspace in pairs(vim.g.obsidian.workspaces) do
+      --      if string.find(workspace.name, ArgLead) ~= nil then
+      --        table.insert(workspaces, workspace.name)
+      --      end
+      --    end
+      --    return workspaces
+      --  end,
+      --})
+      --vim.api.nvim_create_user_command('Ot', function(opts)
+      --  find_obsidian.find_obsidian_tag(vim.g.obsidian.active_workspace, vim.g.obsidian.workspaces, opts.fargs[1])
+      --end, { nargs = 1 })
     end,
   },
-
   { -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
     dependencies = {
